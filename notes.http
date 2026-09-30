@@ -1,0 +1,19 @@
+### get all
+
+GET localhost:3001/api/notes
+
+### get one
+
+GET localhost:3001/api/notes/13
+
+### delete one
+
+DELETE localhost:3001/api/notes/1
+
+### create one
+
+POST localhost:3001/api/notes
+Content-Type: application/json
+
+{
+  }
