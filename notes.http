@@ -4,7 +4,7 @@ GET localhost:3001/api/notes
 
 ### get one
 
-GET localhost:3001/api/notes/13
+GET localhost:3001/api/notes/6abf2af4760bc7c1d463045a
 
 ### delete one
 
@@ -16,4 +16,5 @@ POST localhost:3001/api/notes
 Content-Type: application/json
 
 {
+  "content": "test create"
   }
