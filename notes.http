@@ -4,11 +4,11 @@ GET localhost:3001/api/notes
 
 ### get one
 
-GET localhost:3001/api/notes/6abf2af4760bc7c1d463045a
+GET localhost:3001/api/notes/6abf2af4760bc7c1d463045b
 
 ### delete one
 
-DELETE localhost:3001/api/notes/1
+DELETE localhost:3001/api/notes/6ac2303f99aa3b0ca8054d77
 
 ### create one
 
@@ -16,5 +16,16 @@ POST localhost:3001/api/notes
 Content-Type: application/json
 
 {
-  "content": "test create"
+  "content": "lol"
+  }
+
+
+### update one
+
+PUT localhost:3001/api/notes/6ac36be96e812cca4d1d5598
+Content-Type: application/json
+
+{
+    "content": "test create",
+    "important": true
   }
