@@ -1,4 +1,3 @@
-const cors = require("cors");
 const express = require("express");
 const app = express();
 
@@ -28,7 +27,6 @@ const requestLogger = (req, res, next) => {
   next();
 };
 
-app.use(cors());
 app.use(express.json());
 app.use(express.static("dist"));
 app.use(requestLogger);
