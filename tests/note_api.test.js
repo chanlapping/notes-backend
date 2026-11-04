@@ -1,10 +1,17 @@
 const supertest = require("supertest");
-const { test, after, beforeEach, describe } = require("node:test");
-const app = require("../app");
 const { default: mongoose } = require("mongoose");
+const bcrypt = require("bcrypt");
+const { test, after, beforeEach, describe } = require("node:test");
 const assert = require("node:assert");
+const app = require("../app");
 const Note = require("../models/note");
-const { initialNotes, notesInDB, nonExistingId } = require("./test_helper");
+const User = require("../models/user");
+const {
+  initialNotes,
+  notesInDB,
+  nonExistingId,
+  usersInDB,
+} = require("./test_helper");
 
 const api = supertest(app);
 
@@ -101,6 +108,56 @@ describe("when there are initially some notes saved", () => {
       assert(!ids.includes(noteToDelete.id));
       assert.strictEqual(notesAtEnd.length, notesAtStart.length - 1);
     });
+  });
+});
+
+describe("when there is initially one user in DB", () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+    const passwordHash = await bcrypt.hash("secret", 10);
+    const user = new User({ username: "root", passwordHash });
+    await user.save();
+  });
+
+  test("creation succeeds with a fresh username", async () => {
+    const usersAtStart = await usersInDB();
+    const newUser = {
+      username: "mluukkai",
+      name: "Matti Luukkainen",
+      password: "salainen",
+    };
+
+    await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const usersAtEnd = await usersInDB();
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1);
+
+    const usernames = usersAtEnd.map((user) => user.username);
+    assert(usernames.includes(newUser.username));
+  });
+
+  test("creation fails with proper status code and message if username is already taken", async () => {
+    const usersAtStart = await usersInDB();
+
+    const newUser = {
+      username: "root",
+      name: "superuser",
+      password: "secret",
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    const usersAtEnd = await usersInDB();
+    assert(result.body.error.includes("expected username to be unique"));
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length);
   });
 });
 
